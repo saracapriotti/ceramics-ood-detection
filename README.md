@@ -65,8 +65,7 @@ The dataset is not included in the repository. All CSV files use `;` as separato
 | `OOD-DATASET.csv` | Held-out assemblage: `IMAGE_ID;SAMPLE_ID` |
 | `OOD-DATASET/` | Held-out micrographs |
 | `OOD-DATASET_ground_truth.csv` | Petrographic attribution of the held-out samples: `sample_id;true_class`, a fabric number for known fabrics and `NOVEL` for loners |
-| `fig2_selection.csv` | Optional, for Figure 2: `fabric;folder;image;name;magnification` |
-| `sample_names.csv` | Optional, for Figures 8 and S1: `sample_id;name` (display names) |
+
 
 The sample identifier and the polarization (PPL/XPL) of each training image are parsed
 from its file name (`extract_sample_id` and `extract_polarization` in
