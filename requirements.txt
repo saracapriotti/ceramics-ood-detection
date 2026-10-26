@@ -1,0 +1,24 @@
+# Install PyTorch first, for your platform:
+#   x86 with CUDA:                   see https://pytorch.org/get-started
+#   ARM64 (NVIDIA Grace-Blackwell):  pip install torch torchvision --extra-index-url https://pypi.nvidia.com
+# torch >= 2.3 is required (torch.amp.GradScaler in train.py).
+torch>=2.3
+torchvision>=0.18
+
+# Required by the DynamicViT repository (models/dylvvit.py and its utilities)
+timm==0.6.13
+tensorboardX
+six
+fvcore
+
+# Used by this repository
+numpy<2
+pandas
+scipy
+scikit-learn
+matplotlib>=3.5
+Pillow
+tqdm
+
+# Download of the pretrained weights (see README)
+gdown
