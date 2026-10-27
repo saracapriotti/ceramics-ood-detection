@@ -101,8 +101,8 @@ from its file name (`extract_sample_id` and `extract_polarization` in
 |---|---|
 | `config.py` | Paths, hyperparameters, seed, preprocessing |
 | `dataset_samples.py` | Dataset, multi-view preprocessing (whole image + two square halves), sample-level split |
-| `model.py` | DynamicViT with new classification heads; multi-view wrapper |
-| `train.py` | Training loop (class-weighted cross-entropy + token keep-ratio loss) |
+| `model.py` | Model chosen by `ARCH` (DynamicViT, ResNet50 or DeiT-small) with new classification heads; multi-view wrapper |
+| `train.py` | Training loop (class-weighted cross-entropy; + token keep-ratio loss for DynamicViT) |
 | `inference_utils.py` | Temperature scaling and PPL+XPL late fusion |
 | `preresize_images.py` | One-off: downscaled copies of the images for faster loading |
 | `run_cv.py` | 5-fold cross-validation grouped by sample and stratified by fabric (Tables 2 and 3) |
