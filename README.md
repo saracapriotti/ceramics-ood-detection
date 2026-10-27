@@ -25,6 +25,7 @@ ceramics-ood-detection/
 ├── DynamicViT/     official DynamicViT repository (see "Setup")
 ├── checkpoints/    leave-one-fabric-out models   (created by the scripts)
 └── outputs/        results, tables and figures   (created by the scripts)
+                    (checkpoints_<arch>/ and outputs_<arch>/ for the other architectures)
 ```
 
 All paths are set in `src/config.py` and resolved relative to the repository root.
@@ -53,6 +54,29 @@ All paths are set in `src/config.py` and resolved relative to the repository roo
    mkdir -p pretrained
    gdown 1dNab1B5ZOTVNpnpO6H1TsXKFM8BAlA3I -O pretrained/dynamic-vit_lv-m_r0.7.pth
    ```
+
+## Architectures
+
+Besides DynamicViT, the same pipeline runs with two baselines. The backbone is chosen with
+the `ARCH` environment variable (default `dvit`):
+
+| `ARCH` | Model | Settings that differ from DynamicViT |
+|---|---|---|
+| `dvit` | DynamicViT (LV-ViT-M) | - |
+| `resnet50` | torchvision ResNet50 | batch size 32, 256 px crops, learning rate 3e-4, no keep-ratio loss |
+| `vit` | DeiT-small (timm `deit_small_patch16_224`) | no keep-ratio loss |
+
+Everything else (data, preprocessing, epochs, seed, a single linear head) is identical, so
+that only the backbone changes; the differences are in the `_PRESETS` block at the end of
+`config.py`. ResNet50 and DeiT-small download their ImageNet weights automatically and do
+not need the DynamicViT repository. Each architecture writes to its own `checkpoints_<arch>/`
+and `outputs_<arch>/`. Use the same `ARCH` for every script of a pipeline, for example:
+
+```bash
+cd src
+ARCH=resnet50 python run_cv.py --name whole_halves
+ARCH=resnet50 python run_ood_cv.py --cv-name whole_halves --ground-truth $GT
+```
 
 ## Data
 
@@ -128,7 +152,7 @@ python method_comparison.py --ground-truth $GT
 python all_figures.py
 ```
 
-Outputs are written to `outputs/`:
+Outputs are written to `outputs/` (`outputs_<arch>/` when `ARCH` is not `dvit`):
 
 - `cv/whole_halves/`: per-fold checkpoints and predictions; `summary.csv` holds the
   values of Table 2, and `run_cv.py` prints the per-fabric report of Table 3;
