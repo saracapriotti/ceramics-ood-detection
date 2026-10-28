@@ -80,21 +80,10 @@ ARCH=resnet50 python run_ood_cv.py --cv-name whole_halves --ground-truth $GT
 
 ## Data
 
-The dataset is not included in the repository; it will be made publicly available upon publication of the paper. 
-All CSV files use `;` as separator.
+The dataset is not included in the repository; it will be made publicly available upon publication of the paper.
 
-| File (in `data/`) | Content |
-|---|---|
-| `dataset.csv` | Training set: `IMAGE_ID;CLASS`, image path relative to `final_dataset/` and fabric number (1-20) |
-| `final_dataset/` | Training micrographs |
-| `OOD-DATASET.csv` | Held-out assemblage: `IMAGE_ID;SAMPLE_ID` |
-| `OOD-DATASET/` | Held-out micrographs |
-| `OOD-DATASET_ground_truth.csv` | Petrographic attribution of the held-out samples: `sample_id;true_class`, a fabric number for known fabrics and `NOVEL` for loners |
-
-
-The sample identifier and the polarization (PPL/XPL) of each training image are parsed
-from its file name (`extract_sample_id` and `extract_polarization` in
-`dataset_samples.py`), so that all images of a thin section always fall in the same split.
+The sample identifier and the polarization (PPL/XPL) of each training image are parsed from its file name 
+(`extract_sample_id` and `extract_polarization` in `dataset_samples.py`), so that all images of a thin section always fall in the same split.
 
 ## Code
 
