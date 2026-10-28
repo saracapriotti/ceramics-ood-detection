@@ -300,16 +300,6 @@ def run_experiment(
     ood_scores = orient_scores(aggregate_scores_by_sample(ood_df))
     metrics = evaluate_ood_detection(id_scores, ood_scores)
 
-    print(
-        f"\nOOD detection metrics - held-out class {held_out_class} "
-        f"({len(ood_scores)} OOD samples vs {len(id_scores)} known ID samples):"
-    )
-    for score_name, vals in metrics.items():
-        print(
-            f"  {score_name:12s}  AUROC={vals['auroc']:.3f}  "
-            f"AUPR={vals['aupr']:.3f}  FPR@95TPR={vals['fpr95']:.3f}"
-        )
-
     id_scores.to_csv(os.path.join(exp_dir, f"id_scores_{COVARIANCE}.csv"), index=False)
     ood_scores.to_csv(os.path.join(exp_dir, f"ood_scores_{COVARIANCE}.csv"), index=False)
 
@@ -387,10 +377,5 @@ if __name__ == "__main__":
             .round(4)
         )
         summary.to_csv(os.path.join(out_dir, "loco_ood_summary.csv"), index=False)
-        print(f"\n{'=' * 70}")
-        print(f"SUMMARY - mean +- std over {len(args.seeds)} seeds")
-        print("=" * 70)
-        print(summary.to_string(index=False))
 
     print(f"\nDone - results saved to {out_dir}/")
-    print(all_results.to_string(index=False))

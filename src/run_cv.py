@@ -111,14 +111,7 @@ def main():
         df.groupby(col_label)
         .agg(samples=("sample_id", "nunique"), images=(col_img, "count"))
     )
-    print("=" * 62)
-    print("DATASET - samples and images per fabric")
-    print("=" * 62)
-    print(counts.to_string())
-    print(f"\nTotal: {counts.samples.sum()} samples, {counts.images.sum()} images, "
-          f"{len(counts)} fabrics")
-    print(f"Smallest fabric: {counts.samples.min()} samples")
-    print(f"\nPreprocessing: {describe_preprocessing()}")
+    print(f"Preprocessing: {describe_preprocessing()}")
     print(f"Label smoothing: {config.LABEL_SMOOTHING}")
     counts.to_csv(os.path.join(out_dir, "dataset_composition.csv"))
 
@@ -215,9 +208,6 @@ def main():
     fold_metrics = pd.DataFrame(fold_rows)
     fold_metrics.to_csv(os.path.join(out_dir, "per_fold_metrics.csv"), index=False)
 
-    print(f"\n{'=' * 62}\nPER-FOLD METRICS\n{'=' * 62}")
-    print(fold_metrics.to_string(index=False))
-
     yi, pi = images["true_label"], images["pred"]
     ys, ps = samples_pred["true_label"], samples_pred["soft_pred"]
     yh = samples_pred["hard_pred"]
@@ -240,16 +230,6 @@ def main():
         sample_f1_std_fold=round(fold_metrics["sample_f1"].std(ddof=1), 4),
     )
     pd.DataFrame([overall]).to_csv(os.path.join(out_dir, "summary.csv"), index=False)
-
-    print(f"\n{'=' * 62}")
-    print(f"OVERALL RESULTS - {args.name}, pooled predictions from {args.folds} folds")
-    print("=" * 62)
-    print(f"  Images evaluated: {overall['n_images']}   Samples evaluated: {overall['n_samples']}")
-    print(f"  Image   - accuracy {overall['img_acc']:.4f}   macro-F1 {overall['img_f1']:.4f}")
-    print(f"  Sample  - accuracy {overall['sample_acc_soft']:.4f}   macro-F1 {overall['sample_f1_soft']:.4f}   (soft voting)")
-    print(f"  Sample  - accuracy {overall['sample_acc_hard']:.4f}   macro-F1 {overall['sample_f1_hard']:.4f}   (hard voting)")
-    print(f"  Fold-to-fold variability (std): sample accuracy {overall['sample_acc_std_fold']:.4f}, "
-          f"sample macro-F1 {overall['sample_f1_std_fold']:.4f}")
 
     print("\nPer-fabric classification report (sample level, soft voting, all folds):")
     print(classification_report(ys, ps, zero_division=0))

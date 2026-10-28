@@ -282,10 +282,6 @@ def compute_ood_threshold(
     sample_distances = df.groupby("sample_id")["mahalanobis"].mean()
 
     threshold = float(np.percentile(sample_distances, percentile))
-    print(
-        f"OOD threshold ({percentile}th percentile over {len(sample_distances)} validation samples): "
-        f"{threshold:.3f}"
-    )
     print(f"Mean distance of known samples (validation): {sample_distances.mean():.3f}")
     return threshold, sample_distances
 

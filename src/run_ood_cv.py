@@ -184,8 +184,6 @@ def process_fold(k, train_ids, val_ids, test_ids, df, col_label, fold_dir, num_c
     ood_s = per_sample_scores(ood_img, keep_features=True)
 
     threshold = float(np.percentile(val_s["mahalanobis_raw"], args.percentile))
-    print(f"Mahalanobis threshold ({args.percentile}th percentile over {len(val_s)} validation samples): "
-          f"{threshold:.3f}")
 
     # Per-sample features, at the same aggregation level for every set
     train_feats = np.stack([r["feature"] for r in train_rec])
@@ -464,38 +462,14 @@ def main():
     report.drop(columns=["feature_vector"], errors="ignore").to_csv(
         os.path.join(out_dir, "ood_report.csv"), index=False)
 
-    majority = len(fold_results) // 2 + 1
-    print(f"\n{'=' * 70}\nFLAGGED SAMPLES (in at least {majority} of "
-          f"{len(fold_results)} folds)\n{'=' * 70}")
-    flagged = report[report["status"] == STATUS_NEW]
-    cols = ["sample_id", "mahalanobis_ratio", "n_fold_flagged", "predicted_class", "n_images"]
-    if gt is not None:
-        cols.append("true_class")
-    print(flagged[cols].to_string(index=False) if len(flagged) else "  none")
-
     if gt is not None:
         per_fold = evaluate_folds(fold_results, gt, score_names)
         per_fold.round(4).to_csv(os.path.join(out_dir, "ood_metrics_per_fold.csv"), index=False)
         summary = summarise(per_fold)
         summary.to_csv(os.path.join(out_dir, "ood_metrics_summary.csv"), index=False)
 
-        print(f"\n{'=' * 70}\nOOD METRICS - mean +- std over {len(fold_results)} folds\n{'=' * 70}")
-        for proto, grp in summary.groupby("protocol"):
-            label = ("A) negatives = KNOWN-fabric samples of the OOD dataset"
-                     if proto.startswith("A") else
-                     "B) negatives = out-of-fold test samples of the training dataset")
-            print(f"\n{label}   (n_neg={grp['n_neg'].iloc[0]}, n_loner={grp['n_pos'].iloc[0]})")
-            print(f"{'score':<20}{'AUROC':>16}{'AUPR':>16}{'FPR@95TPR':>16}")
-            for _, r in grp.iterrows():
-                print(f"{r['score']:<20}"
-                      f"{r['auroc_mean']:>9.3f} +-{r['auroc_sd']:.3f}"
-                      f"{r['aupr_mean']:>9.3f} +-{r['aupr_sd']:.3f}"
-                      f"{r['fpr95_mean']:>9.3f} +-{r['fpr95_sd']:.3f}")
-
         sweep = threshold_sweep(fold_results, gt, args.percentiles)
         sweep.to_csv(os.path.join(out_dir, "threshold_sweep.csv"), index=False)
-        print(f"\n{'=' * 70}\nTHRESHOLD SWEEP (Mahalanobis, mean over folds)\n{'=' * 70}")
-        print(sweep.to_string(index=False))
         plot_sweep(sweep, out_dir)
         plot_score_separation(fold_results, score_names, gt, out_dir)
 

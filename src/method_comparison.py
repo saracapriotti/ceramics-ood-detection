@@ -154,35 +154,6 @@ def main():
                      if s in set(allres["setting"])]
     score_order = [s for s in METHODS if s in set(allres["score"])]
 
-    print("=" * 78)
-    print("METHOD COMPARISON - mean +- std over repetitions")
-    print("=" * 78)
-    print("The control has 3 repetitions (seeds), the case study 5 (folds).\n")
-
-    for setting in setting_order:
-        print(f"--- {setting} " + "-" * (74 - len(setting)))
-        print(f"{'method':<22}{'family':<20}{'AUROC':>16}{'AUPR':>16}{'FPR@95':>14}")
-        rows = [(s, agg.loc[(setting, s)]) for s in score_order if (setting, s) in agg.index]
-        rows.sort(key=lambda kv: -kv[1][("auroc", "mean")])
-        for s, r in rows:
-            label, family, _ = METHODS[s]
-
-            def fmt(m):
-                sd = r[(m, "std")]
-                return f"{r[(m, 'mean')]:.3f}+-{0 if np.isnan(sd) else sd:.3f}"
-
-            print(f"{label:<22}{family:<20}{fmt('auroc'):>16}{fmt('aupr'):>16}"
-                  f"{fmt('fpr95'):>14}")
-        print()
-
-    # Wide table: one row per method, one column per setting
-    wide = (allres.pivot_table(index="score", columns="setting", values="auroc",
-                               aggfunc="mean")
-            .reindex(score_order)[setting_order].round(3))
-    wide.index = [METHODS[s][0] for s in wide.index]
-    print("AUROC, one row per method:")
-    print(wide.to_string())
-
     out = os.path.join(config.OUTPUT_DIR, "method_comparison.csv")
     agg.round(4).to_csv(out)
     print(f"\n{out}")

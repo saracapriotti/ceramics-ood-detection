@@ -280,13 +280,6 @@ def main():
             tab_case_study(dc, args.percentile, out, best,
                            "tab_case_study_own_threshold.tex")
 
-    if dc is not None:
-        print("\nCase study summary:")
-        q = dc[dc["percentile"] == args.percentile]
-        cols = ["method", "novel_found", "novel_missed", "false_alarm",
-                "correct_known", "wrong_class", "openset"]
-        print(q[[c for c in cols if c in q.columns]].to_string(index=False))
-
 
 if __name__ == "__main__":
     main()

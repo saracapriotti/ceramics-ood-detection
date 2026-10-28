@@ -85,12 +85,7 @@ def single_table(args, extract_sample_id, extract_polarization, out_dir):
             tot[c] = int(t[c].sum())
     tot["img_per_sample"] = round(tot["images"] / tot["samples"], 1)
 
-    print("=" * 62)
     print(path)
-    print("=" * 62)
-    print(t.to_string(index=False))
-    print("-" * 62)
-    print(f"{len(t)} fabrics, {tot['samples']} samples, {tot['images']} images")
     print(f"Smallest fabric: {t['samples'].min()} samples "
           f"(fabric {t.loc[t['samples'].idxmin(), 'fabric']})")
     print(f"Largest fabric:  {t['samples'].max()} samples "
@@ -160,14 +155,6 @@ def combined_table(args, extract_sample_id, extract_polarization, out_dir):
         t[c] = t[c].astype(int)
     t = t.sort_values("fabric").reset_index(drop=True)
 
-    print("=" * 74)
-    print("GROUP 1 (training)  vs  GROUP 2 (held-out)")
-    print("=" * 74)
-    print(t.to_string(index=False))
-    print(f"\nLoners: {n_loner_samples} samples, {n_loner_images} images")
-    print(f"Group 1: {t['samples_g1'].sum()} samples, {t['images_g1'].sum()} images")
-    print(f"Group 2: {t['samples_g2'].sum() + n_loner_samples} samples, "
-          f"{t['images_g2'].sum() + n_loner_images} images")
     represented = int((t["samples_g2"] > 0).sum())
     print(f"Fabrics represented in the test material: {represented} of {len(t)}")
 

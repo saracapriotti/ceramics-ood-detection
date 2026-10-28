@@ -206,8 +206,6 @@ def run_for_class(held_out_class: int, device, pca_components: int | None,
             continue
         m = dict(auroc=roc_auc_score(y, s), aupr=average_precision_score(y, s),
                  fpr95=fpr_at_tpr(y, s, 0.95))
-        print(f"  {name:20s}  AUROC={m['auroc']:.3f}  AUPR={m['aupr']:.3f}  "
-              f"FPR@95TPR={m['fpr95']:.3f}")
         rows.append(dict(held_out_class=held_out_class, seed=seed, score=name, **m))
 
     # Per-sample scores
@@ -287,4 +285,3 @@ if __name__ == "__main__":
         full_path = os.path.join(out_dir, f"all_scores_comparison{suffix}.csv")
         full_table.to_csv(full_path, index=False)
         print(f"\nFull comparison table saved to {full_path}")
-        print(full_table.to_string(index=False))

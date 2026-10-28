@@ -325,8 +325,7 @@ def evaluate_method(ood, val, is_novel, fabric, col, percentile):
     return c, d
 
 
-def analyze(ood, val, is_novel, fabric, percentiles, chosen_percentile, methods=None,
-            verbose=True):
+def analyze(ood, val, is_novel, fabric, percentiles, chosen_percentile, methods=None):
     """Evaluate the methods at several thresholds. Returns the table of
     counts and, for the chosen threshold, the per-sample details of each
     method. Shared with the figure scripts, so that the decision rule is
@@ -334,10 +333,6 @@ def analyze(ood, val, is_novel, fabric, percentiles, chosen_percentile, methods=
     methods = methods or REPRESENTATIVES
     rows, details = [], {}
     for perc in percentiles:
-        if verbose:
-            print(f"--- {perc:g}th percentile " + "-" * 56)
-            print(f"{'method':<24}{'found':>10}{'false al.':>12}{'open-set':>11}"
-                  f"{'   ' + ' '.join(f'{o[:10]:>12}' for o in OUTCOMES)}")
         for m in methods:
             if m not in METHODS:
                 print(f"  unknown method: {m}")
@@ -345,19 +340,13 @@ def analyze(ood, val, is_novel, fabric, percentiles, chosen_percentile, methods=
             col_name, label, _ = METHODS[m]
             co, cv = find_column(ood, col_name), find_column(val, col_name)
             if co is None or cv is None:
-                if verbose:
+                if perc == percentiles[0]:
                     print(f"{label:<24}  column '{col_name}' missing, skipped")
                 continue
             c, det = evaluate_method(ood, val, is_novel, fabric, co, perc)
-            if verbose:
-                print(f"{label:<24}{c['recall_novel']:>9.1f}%"
-                      f"{c['false_alarms']:>11.1f}%{c['openset']:>10.1f}%   "
-                      + " ".join(f"{c[o]:>12d}" for o in OUTCOMES))
             rows.append(dict(percentile=perc, method=label, **c))
             if perc == chosen_percentile:
                 details[label] = det
-        if verbose:
-            print()
     return pd.DataFrame(rows), details
 
 
