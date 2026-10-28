@@ -80,7 +80,8 @@ ARCH=resnet50 python run_ood_cv.py --cv-name whole_halves --ground-truth $GT
 
 ## Data
 
-The dataset is not included in the repository. All CSV files use `;` as separator.
+The dataset is not included in the repository; it will be made publicly available upon publication of the paper. 
+All CSV files use `;` as separator.
 
 | File (in `data/`) | Content |
 |---|---|
